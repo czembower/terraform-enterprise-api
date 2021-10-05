@@ -3,7 +3,7 @@ This lambda function handles build/destroy operations by communicating with the 
 '''
 import logging
 import json
-import infra
+import infra # this is an external custom library with Vault helpers
 import boto3
 import os
 import requests
@@ -15,7 +15,6 @@ logger.setLevel(logging.INFO)
 
 region = os.environ['AWS_REGION']
 vault_role = os.environ['VAULT_ROLE']
-vault_token = os.environ['VAULT_TOKEN']
 name_key = os.environ['NAME_KEY']
 
 # initial dynamodb
@@ -259,7 +258,7 @@ def lambda_handler(event, context):
 
         # retrieve TFE team token from vault
         try:
-            tfe_token = infra.get_secret(vault_role, 'vprod-core/tokens', 'tfe-team-token')
+            tfe_token = infra.get_secret(vault_role, 'admin/tokens', 'tfe-team-token')
         except:
             logger.error('unable to access terraform token')
         else:
